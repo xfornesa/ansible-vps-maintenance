@@ -2,7 +2,7 @@
 
 - name: Check that the sysctl.conf exists
   stat:
-    path: /etc/sysctl.conf
+    path: /proc/sys/net/ipv4/
   register: sysctl_stat_result
 
 - name: Harden TCP/IP stack against SYN floods
