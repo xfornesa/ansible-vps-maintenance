@@ -31,7 +31,7 @@ Then you can continue setting the vars, in our example:
 ```yaml
 # maintenance.yml
 ---
-- name: Playbook for setup vagrant server
+- name: Playbook for maintenance vagrant server
   hosts: all
   become: True
 
@@ -41,6 +41,8 @@ Then you can continue setting the vars, in our example:
     - user_group: "{{ user_name }}"
     - user_home: "/home/{{ user_name }}"
     - user_ssh_pub_file: "./files/{{ user_name }}.pub"
+    - server_timezone: 'Europe/Madrid'
+    - server_admin_email: someone@example.org
 
   roles:
     - { role: xfornesa.vps-maintenance }
@@ -50,8 +52,7 @@ Then start the vagrant machine, install the requirements (roles required) and pl
 ```bash
 $ cd example
 $ vagrant up
-$ ansible-galaxy install --roles-path ./roles/ -r requirements.yml
-$ sh setup.sh
+$ ansible-galaxy install -r requirements.yml
 $ sh maintenance.sh
 ```
 
