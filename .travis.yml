@@ -1,0 +1,37 @@
+---
+language: python
+python: "2.7"
+
+services:
+  - docker
+
+branches:
+  only:
+    - master
+
+# Use the new container infrastructure
+sudo: false
+
+env:
+  - distribution: Ubuntu
+    distribution_version: xenial
+    init: /lib/systemd/systemd
+    run_opts: "--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro"
+    ANSIBLE_VERSION: docker
+
+before_install:
+  # Pull container.
+  - docker pull ansiblecheck/ansiblecheck:${distribution,,}-${distribution_version}
+
+script:
+  # Docker Testing Commands
+  - container_id=$(mktemp)
+  # Start The Built Container In The Background
+  - docker run --detach --volume="${PWD}":/etc/ansible/roles/role_under_test:ro ${run_opts} ansiblecheck/ansiblecheck:"${distribution,,}"-"${distribution_version}" "${init}" > "${container_id}"
+  # Ansible syntax check.
+  - docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml --syntax-check
+  # Test role.
+  - docker exec "$(cat ${container_id})" ansible-playbook /etc/ansible/roles/role_under_test/tests/test.yml -v
+
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
