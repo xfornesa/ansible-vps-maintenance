@@ -1,0 +1,16 @@
+---
+- name: Playbook for setup vagrant server
+  hosts: all
+  become: True
+
+  vars:
+    - debug: yes
+    - user_name: user_test
+    - user_group: "{{ user_name }}"
+    - user_home: "/home/{{ user_name }}"
+    - user_ssh_pub_file: "./files/{{ user_name }}.pub"
+    - server_timezone: 'Europe/Madrid'
+    - server_admin_email: someone@example.org
+
+  roles:
+    - { role: local-vps-maintenance }
