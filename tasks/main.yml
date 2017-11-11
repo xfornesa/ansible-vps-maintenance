@@ -1,0 +1,14 @@
+---
+# tasks file for vps-maintenance
+
+- include: users.yml
+- include: hostname.yml
+- include: timezone.yml
+- include: sysctl.yml
+- include: system_updates.yml
+- include: system_utilities.yml
+- include: lockdown_full.yml
+- include: fail2ban.yml
+- include: ufw.yml
+- include: postfix.yml
+#- include: reboot.yml

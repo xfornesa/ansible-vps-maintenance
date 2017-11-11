@@ -1,0 +1,43 @@
+---
+# tasks file for vps-maintenance
+- name: Make sure we have a 'wheel' group
+  group:
+    name: wheel
+    state: present
+
+- name: Allow 'wheel' group to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%wheel'
+    line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+    validate: visudo -cf %s
+
+- name: add user group
+  group:
+    name: "{{ user_group | default('user_group') }}"
+    state: present
+
+- name: create user to perform deploy
+  user:
+    name: "{{ user_name | default('user_name') }}"
+    group: "{{ user_group | default('user_group') }}"
+    home: "{{ user_home | default('user_home') }}"
+    shell: /bin/bash
+    groups: wheel
+    append: yes
+
+    state: present
+
+- name: Ensure .ssh directory exists.
+  file:
+    dest: "{{ user_home | default('user_home') }}/.ssh/"
+    mode: 0755
+    owner: "{{ user_name | default('user_name') }}"
+    state: directory
+
+- name: Set authorized key
+  authorized_key:
+    user: "{{ user_name }}"
+    state: present
+    key: "{{ lookup('file', user_ssh_pub_file | default('user_ssh_pub_file')) }}"

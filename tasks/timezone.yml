@@ -1,0 +1,27 @@
+---
+# task for updating timezone settings
+
+- name: Set timezone
+  copy:
+    content: "{{ server_timezone | default('server_timezone') }}"
+    dest: /etc/timezone
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Remove existing localtime configuration file
+  file:
+    path: /etc/localtime
+    state: absent
+
+- name: Set localtime
+  file:
+    src: "/usr/share/zoneinfo/{{ server_timezone | default('server_timezone') }}"
+    dest: /etc/localtime
+    state: link
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Reconfigure tzdata
+  command: dpkg-reconfigure -f noninteractive tzdata
