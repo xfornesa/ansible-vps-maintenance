@@ -1,0 +1,11 @@
+---
+# defaults file for vps-maintenance
+
+user_name: prunatic
+user_group: "{{ user_name }}"
+user_home: "/home/{{ user_name }}"
+user_ssh_pub_file: "files/{{ user_name }}.pub"
+
+server_timezone: 'UTC'
+server_admin_email: someone@example.org
+server_ssh_port: 22
