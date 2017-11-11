@@ -4,3 +4,4 @@
   apt: package={{ item }} state=present
   with_items:
     - vim
+    - tzdata
