@@ -7,6 +7,7 @@
     owner: root
     group: root
     mode: 0644
+  ignore_errors: yes
 
 - name: Issue hostname command
   hostname: name={{ inventory_hostname }}
@@ -14,3 +15,4 @@
 
 - name: Add hostname entries to hosts file (localhost)
   lineinfile: dest=/etc/hosts regexp="^127.0.0.1" line="127.0.0.1 localhost {{ inventory_hostname }}" state=present
+  ignore_errors: yes
