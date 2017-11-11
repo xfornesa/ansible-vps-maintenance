@@ -1,6 +1,9 @@
 ---
 # task for updating timezone settings
 
+- name: Ensure tzdata is installed
+  apt: package=tzdata state=present
+
 - name: Set timezone
   copy:
     content: "{{ server_timezone | default('server_timezone') }}"
