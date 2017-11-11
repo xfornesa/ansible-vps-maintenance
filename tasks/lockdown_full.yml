@@ -1,0 +1,30 @@
+---
+
+- name: Lock the root user (use 'sudo passwd root' to re-enable)
+  command: passwd -l root
+
+- name: Remove sudo group rights
+  lineinfile: dest=/etc/sudoers regexp="^%sudo" state=absent validate='visudo -cf %s'
+
+- name: Ensure public key is in authorized_keys
+  authorized_key:
+    user: "{{ user_name }}"
+    state: present
+    key: "{{ lookup('file', user_ssh_pub_file | default('user_ssh_pub_file')) }}"
+
+- name: Update ssh parameters
+  lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    regexp: "^{{ item.key }}"
+    line: "{{ item.key }} {{ item.value }}"
+    insertafter: EOF
+  with_items:
+    - { key: 'Port', value: "{{ server_ssh_port | default('server_ssh_port') }}" }
+    - { key: 'PermitRootLogin', value: 'no' }
+    - { key: 'PasswordAuthentication', value: 'no' }
+    - { key: 'LoginGraceTime', value: '20' }
+    - { key: 'X11Forwarding', value: 'no' }
+    - { key: 'AllowUsers', value: "{{ user_name | default('user_name') }}" }
+  notify:
+    - restart ssh
