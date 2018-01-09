@@ -1,0 +1,39 @@
+---
+- hosts: all
+  become: True
+
+  vars:
+    - debug: yes
+    - user_name: user_test
+    - user_group: "{{ user_name }}"
+    - user_home: "/home/{{ user_name }}"
+    - user_ssh_pub_file: "./files/{{ user_name }}.pub"
+    - server_timezone: 'UTC'
+    - server_admin_email: someone@example.org
+
+  pre_tasks:
+    - name: Ensure build dependencies are installed (RedHat)
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - "@Development tools"
+        - tar
+        - unzip
+        - sudo
+        - which
+      when: ansible_os_family == 'RedHat'
+
+    - name: Ensure build dependencies are installed (Debian)
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - build-essential
+        - unzip
+        - tar
+        - sudo
+      when: ansible_os_family == 'Debian'
+
+  roles:
+    - role_under_test
