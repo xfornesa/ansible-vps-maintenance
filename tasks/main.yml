@@ -3,8 +3,10 @@
 
 - import_tasks: users.yml
 - import_tasks: hostname.yml
+  tags: ['no-docker']
 - import_tasks: timezone.yml
 - import_tasks: sysctl.yml
+  tags: ['no-docker']
 - import_tasks: system_updates.yml
 - import_tasks: system_utilities.yml
 - import_tasks: lockdown_full.yml
